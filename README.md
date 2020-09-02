@@ -4,7 +4,7 @@ Steps:<br>
 Module Pinhole_Calibration_Start<br>
 User opens unsorted data file<br>
 User picks from list one of two type measurement systems (APIS or HAPI)<br>
-User picks from list one of two analisys types - XY (positions of measurement points) or sizing (sizes of measurement points)<br>
+User picks from list one of two analysis types - XY (positions of measurement points) or sizing (sizes of measurement points)<br>
 User picks from list position of measured sample in box with other samples<br>
 Macro assigns measured values to master data<br>
 Macro checks for missing measured values<br>
