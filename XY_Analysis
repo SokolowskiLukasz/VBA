@@ -1,0 +1,338 @@
+Rem Attribute VBA_ModuleType=VBAModule
+Option VBASupport 1
+Option Explicit
+Const strQuellTab As String = "Reference data"
+Const strErgebnisCS As String = "Ergebnis sizing & count"
+Const strZielTab As String = "Step 1"
+Const strErgebnisXY As String = "Report XY"
+
+Private Sub XY_Analysis()
+
+Application.ScreenUpdating = False
+
+Dim dblXQuell As Double
+Dim dblYQuell As Double
+Dim dblXZiel As Double
+Dim dblYZiel As Double
+Dim DefType As String
+Dim dblXSuchradius As Double
+Dim dblYSuchradius As Double
+Dim i1 As Integer
+Dim i2 As Integer
+Dim i3 As Integer
+Dim i4 As Integer
+Dim k As Integer
+Dim i1Ende As Integer
+Dim i2Ende As Integer
+Dim i3Ende As Integer
+Dim i4Ende As Integer
+Dim ieEnd As Integer
+Dim iErgebnisQuelle As Integer
+Dim iErgebnisZiel As Integer
+Dim AbstandAbs As Double
+Dim checkedSlot As Integer
+Dim isSlot As Integer
+Dim strLine As String
+Dim q As Integer
+Dim intResult As Integer
+Dim strPath As String
+'Dim strName As String
+Dim intPos As Integer
+
+
+Sheets("Report XY").Activate
+
+    checkedSlot = Sheets(strErgebnisXY).Cells(1, 10).Value
+    dblXSuchradius = Sheets(strErgebnisXY).Cells(1, 16).Value
+    dblYSuchradius = Sheets(strErgebnisXY).Cells(1, 18).Value
+    i1Ende = Sheets(strQuellTab).Cells(9, 9).End(xlDown).Row
+    i2Ende = Sheets(strZielTab).Cells(9, 1).End(xlDown).Row
+
+    iErgebnisQuelle = 2
+    
+    
+    Sheets(strErgebnisXY).Columns("a:h").ClearContents
+      
+
+    Sheets(strErgebnisXY).Cells(1, 1).Value = "Zeile Ref"
+    Sheets(strErgebnisXY).Cells(1, 2).Value = "X Soll"
+    Sheets(strErgebnisXY).Cells(1, 3).Value = "Y Soll"
+    Sheets(strErgebnisXY).Cells(1, 4).Value = "X Ist"
+    Sheets(strErgebnisXY).Cells(1, 5).Value = "Y Ist"
+    Sheets(strErgebnisXY).Cells(1, 6).Value = "X Abweichung"
+    Sheets(strErgebnisXY).Cells(1, 7).Value = "Y Abweichung"
+    Sheets(strErgebnisXY).Cells(1, 8).Value = "ABS Abweichung"
+    
+    Sheets(strErgebnisXY).Cells(1, 13).Value = strName
+    Sheets(strErgebnisXY).Cells(1, 15).Value = "Suchraum X"
+    Sheets(strErgebnisXY).Cells(1, 17).Value = "Suchraum Y"
+    Sheets(strErgebnisXY).Cells(1, 9).Value = "Beobachteter slot"
+
+    Sheets(strErgebnisXY).Cells(1, 12).Value = "Dateiname"
+    Sheets(strErgebnisXY).Cells(1, 16).Value = dblXSuchradius
+    Sheets(strErgebnisXY).Cells(1, 18).Value = dblYSuchradius
+    
+    
+    
+    Sheets(strErgebnisXY).Cells(1, 21).Value = 0.5
+    Sheets(strErgebnisXY).Cells(1, 23).Value = 1
+    Sheets(strErgebnisXY).Cells(1, 25).Value = 1.5
+
+   
+    
+        
+    ' assigning values to variables X and Y reference from sheet "Result"
+    
+    For i1 = 9 To i1Ende
+        dblXQuell = Sheets(strQuellTab).Cells(i1, 9).Value
+        dblYQuell = Sheets(strQuellTab).Cells(i1, 10).Value
+        
+                
+                Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 1).Value = i1 - 8
+                Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 2).Value = dblXQuell
+                Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 3).Value = dblYQuell
+                
+      
+                iErgebnisZiel = iErgebnisQuelle
+                
+        ' copying X and Y reference values from sheet "Result" to RAM
+        For i2 = 9 To i2Ende
+            DefType = Sheets(strZielTab).Cells(i2, 4).Value
+            dblXZiel = Sheets(strZielTab).Cells(i2, 5).Value
+            dblYZiel = Sheets(strZielTab).Cells(i2, 6).Value
+            isSlot = Sheets(strZielTab).Cells(i2, 2).Value
+            AbstandAbs = ((dblXQuell - dblXZiel) ^ 2 + (dblYQuell - dblYZiel) ^ 2) ^ 0.5
+            
+
+
+                
+' checking whether X measured and X reference are within search distance
+                
+            
+If dblXZiel >= dblXQuell - dblXSuchradius And dblXZiel <= dblXQuell + dblXSuchradius And dblYZiel >= dblYQuell - dblYSuchradius And dblYZiel <= dblYQuell + dblYSuchradius And checkedSlot = isSlot Then
+                                If DefType = "      SPH" Or DefType = "       PH" Or DefType = " Pin-Hole" Then
+                ' pasting X and Y mesured values to sheet "Report XY"
+                Sheets(strErgebnisXY).Cells(iErgebnisZiel, 4).Value = dblXZiel
+                Sheets(strErgebnisXY).Cells(iErgebnisZiel, 5).Value = dblYZiel
+                Sheets(strErgebnisXY).Cells(iErgebnisZiel, 6).Value = dblXZiel - dblXQuell
+                Sheets(strErgebnisXY).Cells(iErgebnisZiel, 7).Value = dblYZiel - dblYQuell
+                Sheets(strErgebnisXY).Cells(iErgebnisZiel, 8).Value = AbstandAbs
+                Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 2).Value = dblXQuell
+                Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 3).Value = dblYQuell
+                
+                
+                iErgebnisZiel = iErgebnisZiel + 1
+
+                iErgebnisQuelle = iErgebnisQuelle + 1
+                                End If
+                   End If
+                          
+                                     
+                    Next i2
+
+                If Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 1) = "" Then
+
+                
+                Else
+                   iErgebnisQuelle = iErgebnisQuelle + 1
+                   End If
+                
+              
+    Next i1
+    
+
+
+
+
+
+
+
+
+'' Deletion of multiple detections ; since there might be two or more reocuurence, there is a loop
+
+ieEnd = Sheets(strErgebnisXY).Cells(2, 2).End(xlDown).Row
+
+
+
+ For k = 1 To ieEnd
+''
+'' Double deletion
+''
+
+
+
+        For iErgebnisQuelle = 3 To ieEnd
+
+
+
+                If Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 2).Value = Sheets(strErgebnisXY).Cells(iErgebnisQuelle - 1, 2).Value Then
+
+                        If Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 3).Value = Sheets(strErgebnisXY).Cells(iErgebnisQuelle - 1, 3).Value Then
+
+
+                                If Sheets(strErgebnisXY).Cells(iErgebnisQuelle, 8).Value < Sheets(strErgebnisXY).Cells(iErgebnisQuelle - 1, 8).Value Then
+                                Rows(iErgebnisQuelle - 1).EntireRow.Delete
+                                Else
+                                Rows(iErgebnisQuelle).EntireRow.Delete
+                                End If
+                        End If
+                End If
+                If iErgebnisQuelle = 38 Then
+                
+                End If
+        Next iErgebnisQuelle
+
+'' Double deletion finished
+
+ Next k
+
+
+
+'' Deletion of multiple detections finish
+
+
+
+'' putting following numbers again
+Dim i As Integer
+
+For i = 1 To 76
+Sheets("Report XY").Activate
+Sheets(strErgebnisXY).Cells.Cells(i + 1, 1).Value = i
+Next i
+
+
+    ' since there might have been rows deleted, chart data ranges must be again defined
+
+    Sheets(strErgebnisXY).ChartObjects("Chart 5").Activate
+    ActiveChart.FullSeriesCollection(1).XValues = "='Report XY'!B$2:$B$77"
+    ActiveChart.FullSeriesCollection(1).Values = "='Report XY'!C$2:$C$77"
+    ActiveChart.FullSeriesCollection(2).XValues = "='Report XY'!ab$2:$ab$77"
+    ActiveChart.FullSeriesCollection(2).Values = "='Report XY'!ac$2:$ac$77"
+    
+    
+
+Sheets("Report XY").Activate
+
+     ' clearing of previous conditional formatting
+  Cells.FormatConditions.Delete
+  
+
+' application of conditional formatting to X deviation
+Range("F2:F77").Select
+    Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlNotBetween, _
+        Formula1:="=-$U$1", Formula2:="=$U$1"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 255
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+
+
+' application of conditional formatting to X deviation
+Range("g2:g77").Select
+    Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlNotBetween, _
+        Formula1:="=-$w$1", Formula2:="=$w$1"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 255
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+    
+    ' application of conditional formatting to X deviation
+Range("h2:h77").Select
+    Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlNotBetween, _
+        Formula1:="=-$y$1", Formula2:="=$y$1"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 255
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+
+Sheets("Report XY").Activate
+Range("ab1:ac1").Select
+
+
+    Selection.AutoFill Destination:=Range("ab1:ac78"), Type:=xlFillDefault
+    Range("ab1:ac78").Select
+
+' Application to conditional formatting to "Dateiname" - if doesn't match to source of picked anylis type, it becomes red
+Range("M1").Select
+    Selection.FormatConditions.Add Type:=xlTextString, String:="=$M$3", _
+        TextOperator:=xlDoesNotContain
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 255
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+    
+ ' Application to conditional formatting to "Dateiname" - if doesn't match to source of picked anylis type, it becomes red
+
+
+Cells(3, 12).Select
+
+
+' inserting of calculation of average deviation, maximum deviation and standard deviation of deviations
+
+
+Sheets(strErgebnisXY).Cells(80, 5).Value = "Average deviation"
+Sheets(strErgebnisXY).Cells(81, 5).Value = "Maximum deviation"
+Sheets(strErgebnisXY).Cells(82, 5).Value = "Standard deviation of deviations"
+
+
+Sheets(strErgebnisXY).Cells(80, 6).Formula = "=AVERAGE(F2:F77)"
+Sheets(strErgebnisXY).Cells(81, 6).Formula = "=MAX(F2:F77)"
+Sheets(strErgebnisXY).Cells(82, 6).Formula = "=STDEV.P(F2:F77)"
+
+
+Sheets(strErgebnisXY).Cells(80, 7).Formula = "=AVERAGE(g2:g77)"
+Sheets(strErgebnisXY).Cells(81, 7).Formula = "=MAX(g2:g77)"
+Sheets(strErgebnisXY).Cells(82, 7).Formula = "=STDEV.P(g2:g77)"
+
+
+Sheets(strErgebnisXY).Cells(80, 8).Formula = "=AVERAGE(h2:h77)"
+Sheets(strErgebnisXY).Cells(81, 8).Formula = "=MAX(h2:h77)"
+Sheets(strErgebnisXY).Cells(82, 8).Formula = "=STDEV.P(h2:h77)"
+
+Range("E80:E82").Select
+    With Selection
+        .HorizontalAlignment = xlRight
+'        .VerticalAlignment = xlBottom
+'        .WrapText = False
+ '       .Orientation = 0
+  '      .AddIndent = False
+   '     .IndentLevel = 0
+    '    .ShrinkToFit = False
+     '   .ReadingOrder = xlContext
+      '  .MergeCells = False
+    End With
+Range("A1").Select
+' closing inserting of calculation of average deviation, maximum deviation and standard deviation of deviations
+
+ActiveWindow.Zoom = 65
+
+' hiding unrelated sheets
+Sheets("Ergebnis sizing & count").Visible = False
+Sheets("Report Sizing and Count").Visible = False
+' closing hiding unrelated sheets
+
+' putting APIS word
+Sheets("Report XY").Cells(3, 13).Value = "APIS"
+Sheets("Report XY").Cells(3, 12).Value = "Ausgewaehlte Analysentyp"
+' closing putting APIS word
+
+
+
+
+
+
+Application.ScreenUpdating = True
+
+End Sub
