@@ -1,0 +1,365 @@
+Rem Attribute VBA_ModuleType=VBAModule
+Option VBASupport 1
+Option Explicit
+Const strQuellTab As String = "Reference data"
+Const strErgebnisSC As String = "Ergebnis sizing & count"
+Const strErgebnisXY As String = "Report XY"
+Const strZielTab As String = "Step 1"
+
+
+
+Private Sub APIS_Sizing()
+
+
+Application.ScreenUpdating = False
+
+Dim dblXQuell As Double
+Dim dblYQuell As Double
+Dim dblSizeQuell As Double
+Dim dblXZiel As Double
+Dim dblYZiel As Double
+Dim dblSizeZiel As Double
+Dim DefType As String
+Dim dblXSuchradius As Double
+Dim dblYSuchradius As Double
+Dim i1 As Integer
+Dim i2 As Integer
+Dim i3 As Integer
+Dim i4 As Integer
+Dim k As Integer
+Dim i1Ende As Integer
+Dim i2Ende As Integer
+Dim i3Ende As Integer
+Dim i4Ende As Integer
+Dim ieEnd As Integer
+Dim iErgebnisQuelle As Integer
+Dim iErgebnisZiel As Integer
+Dim AbstandAbs As Double
+Dim checkedSlot As Integer
+Dim isSlot As Integer
+Dim strLine As String
+Dim q As Integer
+Dim intResult As Integer
+
+
+
+Sheets("Ergebnis sizing & count").Activate
+
+    checkedSlot = Sheets(strErgebnisSC).Cells(1, 15).Value
+    dblXSuchradius = Sheets(strErgebnisSC).Cells(1, 18).Value
+    dblYSuchradius = Sheets(strErgebnisSC).Cells(1, 20).Value
+    i1Ende = Sheets(strQuellTab).Cells(9, 12).End(xlDown).Row
+    i2Ende = Sheets(strZielTab).Cells(9, 1).End(xlDown).Row
+
+    iErgebnisQuelle = 2
+    
+    
+    Sheets(strErgebnisSC).Columns("a:l").ClearContents
+     Sheets(strErgebnisXY).Columns("a:h").ClearContents
+
+    Sheets(strErgebnisSC).Cells(1, 1).Value = "Zeile Ref"
+    Sheets(strErgebnisSC).Cells(1, 2).Value = "X Soll"
+    Sheets(strErgebnisSC).Cells(1, 3).Value = "Y Soll"
+    Sheets(strErgebnisSC).Cells(1, 4).Value = "Size Soll"
+    Sheets(strErgebnisSC).Cells(1, 5).Value = "X Ist"
+    Sheets(strErgebnisSC).Cells(1, 6).Value = "Y Ist"
+    Sheets(strErgebnisSC).Cells(1, 7).Value = "Size Ist"
+    Sheets(strErgebnisSC).Cells(1, 8).Value = "X Abw."
+    Sheets(strErgebnisSC).Cells(1, 9).Value = "Y Abw."
+    Sheets(strErgebnisSC).Cells(1, 10).Value = "ABS Abw."
+    Sheets(strErgebnisSC).Cells(1, 11).Value = "Size Abw."
+    Sheets(strErgebnisSC).Cells(1, 12).Value = "Dateiname"
+    Sheets(strErgebnisSC).Cells(1, 13).Value = strName
+    Sheets(strErgebnisSC).Cells(1, 14).Value = "Beobachteter slot"
+    
+    Sheets(strErgebnisSC).Cells(1, 17).Value = "Suchraum X"
+    Sheets(strErgebnisSC).Cells(1, 18).Value = dblXSuchradius
+    Sheets(strErgebnisSC).Cells(1, 19).Value = "Suchraum Y"
+    Sheets(strErgebnisSC).Cells(1, 20).Value = dblYSuchradius
+    
+    
+
+
+    
+        
+    ' assigning values to variables X and Y reference from sheet "Result"
+    
+    For i1 = 9 To i1Ende
+        dblXQuell = Sheets(strQuellTab).Cells(i1, 12).Value
+        dblYQuell = Sheets(strQuellTab).Cells(i1, 13).Value
+        dblSizeQuell = Sheets(strQuellTab).Cells(i1, 14).Value
+                
+                Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 1).Value = i1 - 8
+                Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 2).Value = dblXQuell
+                Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 3).Value = dblYQuell
+                Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 4).Value = dblSizeQuell
+                
+                
+   
+                iErgebnisZiel = iErgebnisQuelle
+                
+        ' copying X and Y reference values from sheet "Result" to RAM
+        For i2 = 9 To i2Ende
+            DefType = Sheets(strZielTab).Cells(i2, 4).Value
+            dblXZiel = Sheets(strZielTab).Cells(i2, 5).Value
+            dblYZiel = Sheets(strZielTab).Cells(i2, 6).Value
+            dblSizeZiel = (Sheets(strZielTab).Cells(i2, 7).Value + Sheets(strZielTab).Cells(i2, 8).Value) / 2
+            isSlot = Sheets(strZielTab).Cells(i2, 2).Value
+            AbstandAbs = ((dblXQuell - dblXZiel) ^ 2 + (dblYQuell - dblYZiel) ^ 2) ^ 0.5
+            
+
+
+                
+' checking whether X measured and X reference are within search distance
+                
+            
+If dblXZiel >= dblXQuell - dblXSuchradius And dblXZiel <= dblXQuell + dblXSuchradius And dblYZiel >= dblYQuell - dblYSuchradius And dblYZiel <= dblYQuell + dblYSuchradius And checkedSlot = isSlot Then
+                                If DefType = "      SPH" Or DefType = "       PH" Or DefType = " Pin-Hole" Then
+                ' pasting X and Y mesured values to sheet "Ergebnis sizing & count"
+                Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 2).Value = dblXQuell
+                Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 3).Value = dblYQuell
+                Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 4).Value = dblSizeQuell
+                Sheets(strErgebnisSC).Cells(iErgebnisZiel, 5).Value = dblXZiel
+                Sheets(strErgebnisSC).Cells(iErgebnisZiel, 6).Value = dblYZiel
+                Sheets(strErgebnisSC).Cells(iErgebnisZiel, 7).Value = dblSizeZiel
+                Sheets(strErgebnisSC).Cells(iErgebnisZiel, 8).Value = dblXZiel - dblXQuell
+                Sheets(strErgebnisSC).Cells(iErgebnisZiel, 9).Value = dblYZiel - dblYQuell
+                Sheets(strErgebnisSC).Cells(iErgebnisZiel, 10).Value = AbstandAbs
+                Sheets(strErgebnisSC).Cells(iErgebnisZiel, 11).Value = dblSizeZiel - dblSizeQuell
+
+                
+                
+                iErgebnisZiel = iErgebnisZiel + 1
+
+                iErgebnisQuelle = iErgebnisQuelle + 1
+                                End If
+End If
+                          
+                                     
+                    Next i2
+
+                If Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 1) = "" Then
+
+                
+                Else
+                   iErgebnisQuelle = iErgebnisQuelle + 1
+                   End If
+          
+              
+    Next i1
+    
+
+
+
+
+
+
+
+
+'' Deletion of multiple detections ; since there might be two or more reocuurence, there is a loop
+
+ieEnd = Sheets(strErgebnisSC).Cells(2, 2).End(xlDown).Row
+
+
+
+ For k = 1 To ieEnd
+''
+'' Double deletion
+''
+
+
+
+        For iErgebnisQuelle = 3 To ieEnd
+
+
+
+                If Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 2).Value = Sheets(strErgebnisSC).Cells(iErgebnisQuelle - 1, 2).Value Then
+
+                        If Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 3).Value = Sheets(strErgebnisSC).Cells(iErgebnisQuelle - 1, 3).Value Then
+
+
+                                If Sheets(strErgebnisSC).Cells(iErgebnisQuelle, 8).Value < Sheets(strErgebnisSC).Cells(iErgebnisQuelle - 1, 8).Value Then
+                                Rows(iErgebnisQuelle - 1).EntireRow.Delete
+                                Else
+                                Rows(iErgebnisQuelle).EntireRow.Delete
+                                End If
+                        End If
+                End If
+
+        Next iErgebnisQuelle
+
+'' Double deletion finished
+
+ Next k
+
+
+
+'' Deletion of multiple detections finish
+
+
+
+'' putting following numbers again
+Dim i As Integer
+
+For i = 1 To 90
+Sheets("Ergebnis sizing & count").Activate
+Sheets(strErgebnisSC).Cells.Cells(i + 1, 1).Value = i
+Next i
+
+
+    ' since there might have been rows deleted, chart data ranges must be again defined
+
+    Sheets(strErgebnisSC).ChartObjects("Chart 1").Activate
+    ActiveChart.FullSeriesCollection(1).XValues = "='Ergebnis sizing & count'!B$2:$B$91"
+    ActiveChart.FullSeriesCollection(1).Values = "='Ergebnis sizing & count'!C$2:$C$91"
+    ActiveChart.FullSeriesCollection(2).XValues = "='Ergebnis sizing & count'!af$2:$af$91"
+    ActiveChart.FullSeriesCollection(2).Values = "='Ergebnis sizing & count'!ag$2:$ag$91"
+    
+     ' clearing of previous conditional formatting
+  Cells.FormatConditions.Delete
+
+    
+    
+    
+
+Sheets("Ergebnis sizing & count").Activate
+
+' application of conditional formatting to X deviation
+Range("h2:h91").Select
+    Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlNotBetween, _
+        Formula1:="=-$w$1", Formula2:="=$w$1"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 255
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+
+
+' application of conditional formatting to X deviation
+Range("i2:i91").Select
+    Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlNotBetween, _
+        Formula1:="=-$y$1", Formula2:="=$y$1"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 255
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+    
+    
+
+    
+    
+    ' application of conditional formatting to X deviation
+Range("j2:j91").Select
+    Selection.FormatConditions.Add Type:=xlCellValue, Operator:=xlNotBetween, _
+        Formula1:="=-$aa$1", Formula2:="=$aa$1"
+    Selection.FormatConditions(Selection.FormatConditions.Count).SetFirstPriority
+    With Selection.FormatConditions(1).Interior
+        .PatternColorIndex = xlAutomatic
+        .Color = 255
+        .TintAndShade = 0
+    End With
+    Selection.FormatConditions(1).StopIfTrue = False
+
+Sheets("Ergebnis sizing & count").Activate
+Range("af1:ag1").Select
+
+
+    Selection.AutoFill Destination:=Range("af1:ag91"), Type:=xlFillDefault
+    Range("ab1:ac91").Select
+
+
+
+Cells(3, 12).Select
+
+
+Sheets("Report Sizing and Count").Activate
+
+
+
+
+Sheets("Report Sizing and Count").Cells(2, 3).Value = "APIS"
+
+                Sheets("Report Sizing and Count").Cells(8, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(9, 8).Value = "15"
+                Sheets("Report Sizing and Count").Cells(10, 8).Value = "20"
+                Sheets("Report Sizing and Count").Cells(11, 8).Value = "30"
+                Sheets("Report Sizing and Count").Cells(12, 8).Value = "40"
+                Sheets("Report Sizing and Count").Cells(13, 8).Value = "50"
+                Sheets("Report Sizing and Count").Cells(14, 8).Value = "60"
+                Sheets("Report Sizing and Count").Cells(15, 8).Value = "80"
+                Sheets("Report Sizing and Count").Cells(16, 8).Value = "100"
+                           
+                Sheets("Report Sizing and Count").Cells(8, 9).Value = "2"
+                Sheets("Report Sizing and Count").Cells(9, 9).Value = "2"
+                Sheets("Report Sizing and Count").Cells(10, 9).Value = "2"
+                Sheets("Report Sizing and Count").Cells(11, 9).Value = "2"
+                Sheets("Report Sizing and Count").Cells(12, 9).Value = "2"
+                Sheets("Report Sizing and Count").Cells(13, 9).Value = "5"
+                Sheets("Report Sizing and Count").Cells(14, 9).Value = "5"
+                Sheets("Report Sizing and Count").Cells(15, 9).Value = "5"
+                Sheets("Report Sizing and Count").Cells(16, 9).Value = "5"
+                
+                Sheets("Report Sizing and Count").Cells(8, 10).Value = "2"
+                Sheets("Report Sizing and Count").Cells(9, 10).Value = "2"
+                Sheets("Report Sizing and Count").Cells(10, 10).Value = "2"
+                Sheets("Report Sizing and Count").Cells(11, 10).Value = "2"
+                Sheets("Report Sizing and Count").Cells(12, 10).Value = "2"
+                Sheets("Report Sizing and Count").Cells(13, 10).Value = "5"
+                Sheets("Report Sizing and Count").Cells(14, 10).Value = "5"
+                Sheets("Report Sizing and Count").Cells(15, 10).Value = "5"
+                Sheets("Report Sizing and Count").Cells(16, 10).Value = "5"
+                
+                Sheets("Report Sizing and Count").Cells(17, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(18, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(19, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(20, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(21, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(22, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(23, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(24, 8).Value = "10"
+                Sheets("Report Sizing and Count").Cells(25, 8).Value = "10"
+                
+                Sheets("Report Sizing and Count").Cells(17, 9).Value = "0"
+                Sheets("Report Sizing and Count").Cells(18, 9).Value = "0"
+                Sheets("Report Sizing and Count").Cells(19, 9).Value = "0"
+                Sheets("Report Sizing and Count").Cells(20, 9).Value = "0"
+                Sheets("Report Sizing and Count").Cells(21, 9).Value = "0"
+                Sheets("Report Sizing and Count").Cells(22, 9).Value = "0"
+                Sheets("Report Sizing and Count").Cells(23, 9).Value = "0"
+                Sheets("Report Sizing and Count").Cells(24, 9).Value = "0"
+                Sheets("Report Sizing and Count").Cells(25, 9).Value = "0"
+                
+                Sheets("Report Sizing and Count").Cells(17, 10).Value = "0"
+                Sheets("Report Sizing and Count").Cells(18, 10).Value = "0"
+                Sheets("Report Sizing and Count").Cells(19, 10).Value = "0"
+                Sheets("Report Sizing and Count").Cells(20, 10).Value = "0"
+                Sheets("Report Sizing and Count").Cells(21, 10).Value = "0"
+                Sheets("Report Sizing and Count").Cells(22, 10).Value = "0"
+                Sheets("Report Sizing and Count").Cells(23, 10).Value = "0"
+                Sheets("Report Sizing and Count").Cells(24, 10).Value = "0"
+                Sheets("Report Sizing and Count").Cells(25, 10).Value = "0"
+                
+                
+' "red NOK /green OK lamp" pasting into cells, that are not assesed in HAPI analysis
+                Sheets("Report Sizing and Count").Cells(16, 11).Copy Sheets("Report Sizing and Count").Cells(17, 11)
+                Sheets("Report Sizing and Count").Cells(16, 11).Copy Sheets("Report Sizing and Count").Cells(18, 11)
+                Sheets("Report Sizing and Count").Cells(16, 11).Copy Sheets("Report Sizing and Count").Cells(19, 11)
+                Sheets("Report Sizing and Count").Cells(16, 11).Copy Sheets("Report Sizing and Count").Cells(8, 11)
+                Sheets("Report Sizing and Count").Cells(16, 11).Copy Sheets("Report Sizing and Count").Cells(9, 11)
+' closing of "red NOK /green OK lamp" pasting into cells, that are not assesed in HAPI analysis
+                
+' hiding of unrelevant sheet
+                Sheets("Report XY").Visible = False
+' closing of hiding of unrelevant sheet
+Application.ScreenUpdating = True
+
+End Sub
+
+
+
+
