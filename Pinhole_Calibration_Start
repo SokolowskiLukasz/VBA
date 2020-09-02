@@ -1,0 +1,125 @@
+Rem Attribute VBA_ModuleType=VBAModule
+Option VBASupport 1
+Option Explicit
+
+Const strQuellTab As String = "Reference data"
+Const strErgebnisCS As String = "Ergebnis sizing & count"
+Const strZielTab As String = "Step 1"
+Const strErgebnisXY As String = "Report XY"
+Public strPath As String
+Public strName As String
+Public intPos As Integer
+
+
+
+
+Sub Vergleich()
+
+Dim modusChoose As Integer
+
+
+
+
+
+
+' Keyboard Shortcut: Ctrl+j
+Application.ScreenUpdating = False
+Sheets("Report XY").Visible = True
+Sheets("Report Sizing and Count").Visible = True
+Sheets("Ergebnis sizing & count").Visible = True
+Sheets("Report XY").Select
+
+
+Dim dblXQuell As Double
+Dim dblYQuell As Double
+Dim dblXZiel As Double
+Dim dblYZiel As Double
+Dim dblXSuchradius As Double
+Dim dblYSuchradius As Double
+Dim i1 As Integer
+Dim i2 As Integer
+Dim i3 As Integer
+Dim i4 As Integer
+Dim k As Integer
+Dim i1Ende As Integer
+Dim i2Ende As Integer
+Dim i3Ende As Integer
+Dim i4Ende As Integer
+Dim ieEnd As Integer
+Dim iErgebnisQuelle As Integer
+Dim iErgebnisZiel As Integer
+Dim AbstandAbs As Double
+Dim checkedSlot As Integer
+Dim isSlot As Integer
+
+Sheets("Step 1").Columns("a:k").ClearContents
+
+
+'' opening external file and copying of external file content and pasting it to "Step 1" sheet
+Dim strLine As String
+Dim q As Integer
+Dim intResult As Integer
+
+    
+    
+
+
+' multiselection off
+Application.FileDialog(msoFileDialogOpen).AllowMultiSelect = False
+' default location of source files
+Application.FileDialog(msoFileDialogOpen).InitialFileName = "\\ipbghf4\wsags\Technology\09-Metrology\SAG-ME-Innovation\Temp\Sokolowski\Rohdata\"
+' file open dialog pop up
+intResult = Application.FileDialog(msoFileDialogOpen).Show
+
+If intResult <> 0 Then
+
+
+' definition of path+filename
+strPath = Application.FileDialog(msoFileDialogOpen).SelectedItems(1)
+' defnition of path characters count exluding file name
+intPos = InStrRev(strPath, "\")
+' substraction of intPos from total path+file; resulting filename
+strName = Right(strPath, Len(strPath) - intPos)
+
+
+
+Open strPath For Input As #1
+q = 1
+While EOF(1) = False
+'read the next line of data in the text file
+Line Input #1, strLine
+'print the data in the current row
+Sheets("Step 1").Cells(q, 1) = strLine
+'increment the row counter
+q = q + 1
+Wend
+End If
+Close #1
+
+'' closing of opening external file and copying of external file content and pasting it to "Step 1" sheet
+
+
+'' text to columns
+    Sheets("Step 1").Activate
+    Columns("A:A").Select
+    Selection.TextToColumns Destination:=Range("A1"), DataType:=xlDelimited, _
+        TextQualifier:=xlNone, ConsecutiveDelimiter:=True, Tab:=True, Semicolon _
+        :=False, Comma:=False, Space:=False, Other:=False, FieldInfo:=Array( _
+        Array(1, 1), Array(2, 1), Array(3, 1), Array(4, 1)), TrailingMinusNumbers:=True
+
+'' closing of text to columns
+
+'''' Drop down slots list
+
+
+UserForm1.Show
+
+'''' Closing of Drop down slots list
+
+
+
+UserForm2.Show
+' a fork starts here
+
+Application.ScreenUpdating = True
+End Sub
