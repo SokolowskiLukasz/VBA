@@ -1,0 +1,36 @@
+Rem Attribute VBA_ModuleType=VBAModule
+Option VBASupport 1
+Option Explicit
+
+Private Sub HAPI_Sizing()
+ 
+Application.Run "III_APIS_SC.APIS_Sizing"
+Sheets("Report Sizing and Count").Activate
+
+                Sheets("Report Sizing and Count").Cells(2, 3).Value = "HAPI"
+                
+                Sheets("Report Sizing and Count").Cells(8, 8).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(8, 9).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(8, 10).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(8, 11).Value = "n/a"
+                
+                Sheets("Report Sizing and Count").Cells(9, 8).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(9, 9).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(9, 10).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(9, 11).Value = "n/a"
+                
+                                
+                Sheets("Report Sizing and Count").Cells(17, 8).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(17, 9).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(17, 10).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(17, 11).Value = "n/a"
+                
+                Sheets("Report Sizing and Count").Cells(18, 8).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(18, 9).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(18, 10).Value = "n/a"
+                Sheets("Report Sizing and Count").Cells(18, 11).Value = "n/a"
+                
+Application.ScreenUpdating = True
+
+End Sub
+
