@@ -1,0 +1,21 @@
+Rem Attribute VBA_ModuleType=VBAModule
+Option VBASupport 1
+Option Explicit
+
+Private Sub HAPI_XY_Analysis()
+ 
+Application.Run "I_XY_APIS.XY_Analysis"
+Sheets("Report XY").Activate
+
+    Sheets("Report XY").Cells(3, 13).Value = "HAPI"
+    Sheets("Report XY").Cells(1, 21).Value = 2.5
+    Sheets("Report XY").Cells(1, 23).Value = 13
+    Sheets("Report XY").Cells(1, 25).Value = 15
+
+
+                
+Application.ScreenUpdating = True
+
+End Sub
+
+
